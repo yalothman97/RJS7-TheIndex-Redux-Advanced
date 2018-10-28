@@ -2,14 +2,11 @@ import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
+import { connect } from "react-redux";
+
+import * as actionCreators from "./store/actions/index";
+
 class SearchBar extends Component {
-  state = { query: "" };
-
-  handleChange = event => {
-    this.setState({ query: event.target.value });
-    this.props.changeHandler(event.target.value);
-  };
-
   render() {
     return (
       <div className="form-group col-lg-6 col-12 mx-auto">
@@ -17,8 +14,7 @@ class SearchBar extends Component {
           <input
             className="form-control"
             type="text"
-            value={this.state.value}
-            onChange={this.handleChange}
+            onChange={event => this.props.onSearch(event.target.value)}
           />
           <div className="input-group-append">
             <span className="input-group-text">
@@ -31,4 +27,18 @@ class SearchBar extends Component {
   }
 }
 
-export default SearchBar;
+const mapStateToProps = state => {
+  return {
+    authors: state.rootAuthors.filteredAuthors
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onSearch: query => dispatch(actionCreators.filterAuthors(query))
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SearchBar);

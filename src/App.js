@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, withRouter } from "react-router-dom";
 import axios from "axios";
 
 // Components
@@ -8,47 +8,18 @@ import Loading from "./Loading";
 import AuthorsList from "./AuthorsList";
 import AuthorDetail from "./AuthorDetail";
 
-const instance = axios.create({
-  baseURL: "https://the-index-api.herokuapp.com"
-});
+import { connect } from "react-redux";
 
 class App extends Component {
-  state = {
-    authors: [],
-    loading: true
-  };
-
-  fetchAllAuthors = async () => {
-    const res = await instance.get("/api/authors/");
-    return res.data;
-  };
-
-  async componentDidMount() {
-    try {
-      const authors = await this.fetchAllAuthors();
-      this.setState({
-        authors: authors,
-        loading: false
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   getView = () => {
-    if (this.state.loading) {
+    if (this.props.authors.id) {
       return <Loading />;
     } else {
       return (
         <Switch>
           <Redirect exact from="/" to="/authors" />
           <Route path="/authors/:authorID" component={AuthorDetail} />
-          <Route
-            path="/authors/"
-            render={props => (
-              <AuthorsList {...props} authors={this.state.authors} />
-            )}
-          />
+          <Route path="/authors/" component={AuthorsList} />
         </Switch>
       );
     }
@@ -68,4 +39,9 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    authors: state.rootAuthors.authors
+  };
+};
+export default withRouter(connect(mapStateToProps)(App));

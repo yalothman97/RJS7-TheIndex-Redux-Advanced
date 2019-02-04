@@ -5,13 +5,8 @@ import AuthorCard from "./AuthorCard";
 import SearchBar from "./SearchBar";
 
 import { connect } from "react-redux";
-import * as actionCreators from "./store/actions/index";
 
 class AuthorsList extends Component {
-  componentDidMount() {
-    this.props.fetchAllAuthors();
-  }
-
   render() {
     const authorCards = this.props.filteredAuthors.map(author => (
       <AuthorCard key={author.id} author={author} />
@@ -33,13 +28,4 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchAllAuthors: () => dispatch(actionCreators.fetchAuthors())
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AuthorsList);
+export default connect(mapStateToProps)(AuthorsList);

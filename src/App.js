@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Switch, Route, Redirect, withRouter } from "react-router-dom";
-import axios from "axios";
 
 // Components
 import Sidebar from "./Sidebar";
@@ -9,10 +8,15 @@ import AuthorsList from "./AuthorsList";
 import AuthorDetail from "./AuthorDetail";
 
 import { connect } from "react-redux";
+import * as actionCreators from "./store/actions/index";
 
 class App extends Component {
+  componentDidMount() {
+    this.props.fetchAllAuthors();
+  }
+
   getView = () => {
-    if (this.props.authors.id) {
+    if (this.props.loading) {
       return <Loading />;
     } else {
       return (
@@ -41,7 +45,20 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    authors: state.rootAuthors.authors
+    authors: state.rootAuthors.authors,
+    loading: state.rootAuthors.loading
   };
 };
-export default withRouter(connect(mapStateToProps)(App));
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchAllAuthors: () => dispatch(actionCreators.fetchAuthors())
+  };
+};
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(App)
+);

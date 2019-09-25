@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import axios from "axios";
+import { connect } from "react-redux";
 
 // Components
 import Sidebar from "./Sidebar";
@@ -8,19 +8,12 @@ import Loading from "./Loading";
 import AuthorsList from "./AuthorsList";
 import AuthorDetail from "./AuthorDetail";
 
-const instance = axios.create({
-  baseURL: "https://the-index-api.herokuapp.com"
-});
+import fetchAllAuthors from "./redux/actions/";
 
 class App extends Component {
   state = {
     authors: [],
     loading: true
-  };
-
-  fetchAllAuthors = async () => {
-    const res = await instance.get("/api/authors/");
-    return res.data;
   };
 
   async componentDidMount() {
@@ -68,4 +61,13 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchAllAuthors: res => dispatch(fetchAllAuthors(res))
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(App);
